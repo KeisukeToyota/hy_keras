@@ -31,7 +31,6 @@
         },
         "args": {
             "hashes": [
-                "sha256:89b1bb73765e2e888b0dbf841b358896d3f470898144bf3816c4b192afcdb71d",
                 "sha256:a785b8d837625e9b61c39108532d95b85274acd679693b71ebb5156848fcf814"
             ],
             "version": "==0.1.0"
