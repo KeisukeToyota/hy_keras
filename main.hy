@@ -16,12 +16,9 @@
 (setv img_rows 28
       img_cols 28)
 
-(setv x_train (first (first (mnist.load_data)))
-      y_train (second (first (mnist.load_data)))
-      x_test (first (second (mnist.load_data)))
-      y_test (second (second (mnist.load_data))))
+(setv [[x_train y_train] [x_test y_test]] (mnist.load_data))
 
-(if-not (= (K.image_data_format) "channels_first")
+(if (= (K.image_data_format) "channels_first")
         (setv x_train (x_train.reshape (first x_train.shape) 1 img_rows img_cols)
               x_test (x_test.reshape (first x_test.shape) 1 img_rows img_cols)
               input_shape [1 img_rows img_cols])
@@ -43,6 +40,30 @@
       y_test (keras.utils.to_categorical y_test num_classes))
 
 (setv model (Sequential))
+(model.add (Conv2D 32 :kernel_size [3 3]
+                   :activation "relu"
+                   :input_shape input_shape))
+(model.add (Conv2D 64 [3 3] :activation "relu"))
+(model.add (MaxPooling2D :pool_size [2 2]))
+(model.add (Dropout 0.25))
+(model.add (Flatten))
+(model.add (Dense 128 :activation "relu"))
+(model.add (Dropout 0.5))
+(model.add (Dense num_classes :activation "softmax"))
 
-(.add model (Conv2D 32 :kernel_size [3 3] :activation "relu" :input_shape input_shape))
+(model.compile :loss keras.losses.categorical_crossentropy
+               :optimizer (keras.optimizers.Adadelta)
+               :metrics ["accuracy"])
+
+(model.fit x_train y_train
+           :batch_size batch_size
+           :epochs epochs
+           :verbose 1
+           :validation_data [x_test y_test])
+
+
+(setv score (model.evaluate x_test y_test :verbose 0))
+
+(print "Test loss:" (first score))
+(print "Test accuracy:" (second score))
 
