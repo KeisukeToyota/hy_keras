@@ -61,7 +61,6 @@
            :verbose 1
            :validation_data [x_test y_test])
 
-
 (setv score (model.evaluate x_test y_test :verbose 0))
 
 (print "Test loss:" (first score))
